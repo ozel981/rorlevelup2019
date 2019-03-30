@@ -22,21 +22,13 @@ class SamuraisController < ApplicationController
   end
   
   def destroy
-    begin
       samurai.destroy!
       head 204
-    rescue ActiveRecord::RecordNotFound => exc
-        render json: exc.to_json(only: %w[error]), status: 404
-    end
   end
 
   def update
-    begin 
       samurai.update!(samurai_params)
-      render json: samurai.to_json(only: %w[id name armour battle_counter joined died clan_id]), status: 201
-    rescue ActiveRecord::RecordInvalid => exc
-        render json: exc.to_json(only: %w[error]), status: 422
-    end   
+      render json: samurai.to_json(only: %w[id name armour battle_counter joined died clan_id]), status: 201 
   end
 
   def show
@@ -44,20 +36,16 @@ class SamuraisController < ApplicationController
   end
 
   def create
-    begin
       samurai = clan.samurais.create!(samurai_params)
       render json: samurai.to_json(only: %w[id name]), status: 201
-    rescue ActiveRecord::RecordInvalid => exc
-        render json: exc.to_json(only: %w[error]), status: 422
-    end
   end
 
   def samurai
-      Samurai.find(params[:id])
+      @samurai ||= Samurai.find(params[:id])
   end
 
   def clan
-      Clan.find(params[:clan_id])
+      @clan ||= Clan.find(params[:clan_id])
   end
 
   def samurai_params
